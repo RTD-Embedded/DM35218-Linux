@@ -31,7 +31,7 @@ license terms listed above.
 
 ## Supported Hardware
 
-This software supports the RTD DM35218 (legacy) and (DM35219)[https://www.rtd.com/PC104/DM/analog%20IO/DM35x19.htm].
+This software supports the RTD DM35218 (legacy) and [DM35219](https://www.rtd.com/PC104/DM/analog%20IO/DM35x19.htm).
 
 
 ## Supported Kernel Versions
