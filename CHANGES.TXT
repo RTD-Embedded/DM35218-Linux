@@ -1,0 +1,94 @@
+Change log for SWP-700010154 rev G
+
+Linux Software (DM35218)
+
+Copyright (C) RTD Embedded Technologies, Inc.  All Rights Reserved.
+
+
+
+v01.00.00 (rev A)   8/23/2013  RGG
+-----------------------------------
+- Initial version
+
+
+v02.00.00 (rev B)   2/14/2015  RGG
+-----------------------------------
+- Removed mention of sub-types in the code.  Those are handled
+  outside of the code to remove confusion.
+- Changed "Board" functions to "Gbc" functions since that is the
+  register section they operate on.
+- PCI Vendor ID moved to board.h
+- ADC examples can now use a loopback from the DACs so that a 
+  function generator is not required to test operation.
+- DAC in dm35218_adc example was set to wrong output range.
+- Calculated buffer size in dm35218_adc_continuous_dma was not
+  clearing bottom 3 bits, as it should.
+- Driver is now dual-licensed.  The driver and all files required to use it
+  is GPLv2 licensed, and the user-mode libraries and examples use the
+  standard RTD license.
+- Driver now creates the device files directly, instead of having the user
+  do so via the /proc.  This is in response to the /proc interface changing
+  in kernel version 3.10.
+- DAC_Channel_Set_Output_Range changed to DAC_Channel_Setup for consistency.
+- Syncbus_Set_Output_Enable changed to Syncbus_Set_Direction, because that
+  is what it's doing.
+  
+ 
+v03.00.00 (rev C)   3/20/2016   RGG
+-----------------------------------
+- Explicitly calling pci_set_master in driver to allow DMA, as some
+  UEFI BIOS do not set this in PCI space.
+- Removed library function _Find_Used_Buffer because it had some inherent flaws
+  and in very remote cases could fail.  The user is now responsible to keep
+  track of what buffer is next.  All examples using DMA have been updated to
+  demonstrate how to do this.
+- Changed method in library for setting sample/conversion rate.  It now gets the 
+  system clock from another library call (which constrains it) instead of reading
+  it directly.  This solves a problem where consecutive calls to set the same
+  sample rate was resulting in different rates for different function blocks.
+- Adding adc_to_dac_dma example.  This example takes what is captured on an
+  ADC and then writes it to the corresponding DAC output buffer.
+- Adding adc_sync_trig_dma example.  This example uses a signal on the syncbus
+  to trigger when to take samples.  
+- Removed library function for setting ISR priority.  Using it required being root,
+  and it's not actually needed anyway.
+
+
+v04.00.00 (rev D)     03/30/2017   RGG
+---------------------------------------
+- Added adc_thresh_dma example.  It demonstrates setting the ADC sampling start
+  trigger when the value crosses a threshold.
+- Added revision info from GBC registers to list_fb example output.
+- DMA Buffer setup library call changed.  It now takes a single unsigned
+  8-bit value for the register instead of booleans for every bit.
+- Dma Initialize and other functions moved out of DMA library and into 
+  os-specific library.
+- Added reference count to driver.  This prevents the device file from being
+  opened while already held open by another program.
+- All instances of CLK_SRC_GBL have been changed to CLK_BUS for clarity.
+- Removed setting rate in _dac example, as it is not needed.
+- First part of adc_sync_trig_dma example was not triggering correctly.
+- Simplified adc_thresh_dma example, as it is only meant to serve as an
+  example of triggering on threshold.
+- Simplified adc_sync_trig example, as it is only meant to serve as an 
+  example of triggering from the syncbus input.
+  
+
+v04.00.01 (rev E)     05/21/2020   LRF
+--------------------------------------
+- Fixed DMA usage for 5.0+ kernels.
+
+
+v05.00.00 (rev F)     04/3/2024	   LRF
+--------------------------------------
+- Redesign of Driver structure to accomodate the ARM Processors, for RTD NVIDIA Product line and needs of 6.5 kernel versions.
+- Compatability fix for Processors with enabled IOMMU
+- check_result changed to DM35218_Check_Result(...) to avoid namespace collisions when including multiple rtd libraries in a program.
+- Basic interrupts program added for example of non-DMA interrupts.
+
+v05.00.01 (rev G)     08/20/2026  AMS
+--------------------------------------
+- Removed use of EXTRA_CFLAGS in the driver makefile which prevented compilation on modern Linux versions.
+- Fixed a bug in the library where function pointer declarations were missing arguments
+  which prevented compilation with modern GCC.
+- Updated README.TXT to markdown format.
